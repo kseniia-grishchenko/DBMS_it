@@ -16,7 +16,7 @@ class Column(ABC):
 
     @staticmethod
     @abstractmethod
-    def validate(value):
+    def validate(value) -> bool:
         pass
 
 
@@ -28,7 +28,7 @@ class IntCol(Column):
         super().__init__(IntCol.TYPE, name, default)
 
     @staticmethod
-    def validate(value):
+    def validate(value) -> bool:
         return isinstance(value, int)
 
 
@@ -40,7 +40,7 @@ class RealCol(Column):
         super().__init__(RealCol.TYPE, name, default)
 
     @staticmethod
-    def validate(value):
+    def validate(value) -> bool:
         return isinstance(value, float)
 
 
@@ -52,7 +52,7 @@ class CharCol(Column):
         super().__init__(CharCol.TYPE, name, default)
 
     @staticmethod
-    def validate(value):
+    def validate(value) -> bool:
         return isinstance(value, str) and len(value) == 1
 
 
@@ -64,7 +64,7 @@ class StringCol(Column):
         super().__init__(StringCol.TYPE, name, default)
 
     @staticmethod
-    def validate(value):
+    def validate(value) -> bool:
         return isinstance(value, str)
 
 
@@ -76,7 +76,7 @@ class EmailCol(Column):
         super().__init__(EmailCol.TYPE, name, default)
 
     @staticmethod
-    def validate(value):
+    def validate(value) -> bool:
         email_regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
         return bool(re.fullmatch(email_regex, value))
 
@@ -113,5 +113,5 @@ class EnumCol(Column):
         self.available_values = available_values
         self.type_class = type_class
 
-    def validate(self, value):
+    def validate(self, value) -> bool:
         return value in self.available_values and self.type_class.validate(value)
