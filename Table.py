@@ -28,7 +28,8 @@ class Table:
             if not current_value:
                 default_value = column.default
             if current_value and not column.validate(current_value):
-                raise TypeError(f'This value {current_value} does not match column type! Column {column.name} type is {column.type} and entered type is {type(value)}')
+                raise TypeError(f'This value {current_value} does not match column type! '
+                                f'Column {column.name} type is {column.type} and entered type is {type(current_value)}')
             row.append(current_value or default_value)
         new_row = Row(row)
         self.rows.append(new_row)
