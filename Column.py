@@ -21,8 +21,8 @@ class Column(ABC):
 
 
 class IntCol(Column):
-    default = 0
-    type = 'int'
+    TYPE = "int"
+    DEFAULT = 0
 
     def __init__(self, name):
         super().__init__(IntCol.type, name, IntCol.default)
@@ -32,8 +32,8 @@ class IntCol(Column):
 
 
 class RealCol(Column):
-    default = 0.0
-    type = 'real'
+    TYPE = "real"
+    DEFAULT = 0.0
 
     def __init__(self, name):
         super().__init__(RealCol.type, name, RealCol.default)
@@ -43,8 +43,8 @@ class RealCol(Column):
 
 
 class CharCol(Column):
-    default = ''
-    type = 'char'
+    TYPE = "char"
+    DEFAULT = "_"
 
     def __init__(self, name):
         super().__init__(CharCol.type, name, CharCol.default)
@@ -54,8 +54,8 @@ class CharCol(Column):
 
 
 class StringCol(Column):
-    default = ''
-    type = 'string'
+    TYPE = "string"
+    DEFAULT = ""
 
     def __init__(self, name):
         super().__init__(StringCol.type, name, StringCol.default)
@@ -76,8 +76,34 @@ class EnumCol(Column):
 
 
 class EmailCol(Column):
-    default = ''
-    type = 'email'
+    TYPE = "email"
+    DEFAULT = "default@default.com"
+
+    def __init__(self, name: str, default: str = DEFAULT):
+        super().__init__(EmailCol.TYPE, name, default)
+
+    @staticmethod
+    def validate(value):
+        email_regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+        return bool(re.fullmatch(email_regex, value))
+
+
+class EnumCol(Column):
+    TYPE = "enum"
+
+    COLUMN_TYPE_CLASS = {  # this should be frozen dict
+        "int": IntCol,
+        "real": RealCol,
+        "char": CharCol,
+        "string": StringCol,
+        "email": EmailCol,
+    }
+
+    def __init__(
+        self, name: str, column_type: str, available_values: tuple, default: Any = None
+    ):
+        if len(available_values) == 0:
+            raise ValueError("Available values cannot be empty!")
 
     def __init__(self, name):
         super().__init__(EmailCol.type, name, EmailCol.default)
