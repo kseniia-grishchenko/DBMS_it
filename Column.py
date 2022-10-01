@@ -1,21 +1,22 @@
 from abc import ABC, abstractmethod
 import re
+from dataclasses import dataclass
+from typing import Any
 
 
+@dataclass
 class Column(ABC):
-    def __init__(self, column_type, name, default):
-        self.type = column_type
-        self.name = name
-        self.default = default
+    type: str
+    name: str
+    default: Any
 
-    def __str__(self):
-        return self.name
+    def __post_init__(self):
+        if not self.validate(self.default):
+            raise TypeError("Default value does not pass validation")
 
-    def __repr__(self):
-        return self.__str__()
-
+    @staticmethod
     @abstractmethod
-    def validate(self, value):
+    def validate(value):
         pass
 
 
