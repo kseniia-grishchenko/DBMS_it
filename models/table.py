@@ -1,7 +1,7 @@
 from tabulate import tabulate
 
-from Column import IntCol, RealCol, CharCol, StringCol, EnumCol, EmailCol
-from Row import Row
+from column import IntCol, RealCol, CharCol, StringCol, EnumCol, EmailCol
+from row import Row
 
 COLUMN_TYPES = ["int", "real", "char", "string", "enum", "email"]
 
