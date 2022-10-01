@@ -24,8 +24,8 @@ class IntCol(Column):
     TYPE = "int"
     DEFAULT = 0
 
-    def __init__(self, name):
-        super().__init__(IntCol.type, name, IntCol.default)
+    def __init__(self, name: str, default: int = DEFAULT):
+        super().__init__(IntCol.TYPE, name, default)
 
     @staticmethod
     def validate(value):
@@ -36,8 +36,8 @@ class RealCol(Column):
     TYPE = "real"
     DEFAULT = 0.0
 
-    def __init__(self, name):
-        super().__init__(RealCol.type, name, RealCol.default)
+    def __init__(self, name: str, default: float = DEFAULT):
+        super().__init__(RealCol.TYPE, name, default)
 
     @staticmethod
     def validate(value):
@@ -48,8 +48,8 @@ class CharCol(Column):
     TYPE = "char"
     DEFAULT = "_"
 
-    def __init__(self, name):
-        super().__init__(CharCol.type, name, CharCol.default)
+    def __init__(self, name: str, default: str = DEFAULT):
+        super().__init__(CharCol.TYPE, name, default)
 
     @staticmethod
     def validate(value):
@@ -60,8 +60,8 @@ class StringCol(Column):
     TYPE = "string"
     DEFAULT = ""
 
-    def __init__(self, name):
-        super().__init__(StringCol.type, name, StringCol.default)
+    def __init__(self, name: str, default: str = DEFAULT):
+        super().__init__(StringCol.TYPE, name, default)
 
     @staticmethod
     def validate(value):
