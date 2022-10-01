@@ -66,4 +66,19 @@ class Table:
         elif column_type == "email":
             return EmailCol(name)
         else:
-            raise TypeError('This type is not supported!')
+            raise TypeError("This type is not supported!")
+
+    def get_row(self, index: int):
+        if not (0 <= index < len(self.rows)):
+            raise ValueError("Row with such index does not exist!")
+
+        return self.rows[index]
+
+    def change_row(self, index: int, changed_part: dict) -> None:
+        # row exist
+        # changed_part len is not 0
+        # all keys of changed part is subset of existing columns
+        # check all types match
+        print(index, changed_part)
+        existing_row = self.get_row(index)
+        print("Row exists", existing_row)
