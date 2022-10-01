@@ -27,7 +27,8 @@ class IntCol(Column):
     def __init__(self, name):
         super().__init__(IntCol.type, name, IntCol.default)
 
-    def validate(self, value):
+    @staticmethod
+    def validate(value):
         return isinstance(value, int)
 
 
@@ -38,7 +39,8 @@ class RealCol(Column):
     def __init__(self, name):
         super().__init__(RealCol.type, name, RealCol.default)
 
-    def validate(self, value):
+    @staticmethod
+    def validate(value):
         return isinstance(value, float)
 
 
@@ -49,7 +51,8 @@ class CharCol(Column):
     def __init__(self, name):
         super().__init__(CharCol.type, name, CharCol.default)
 
-    def validate(self, value):
+    @staticmethod
+    def validate(value):
         return isinstance(value, str) and len(value) == 1
 
 
@@ -60,7 +63,8 @@ class StringCol(Column):
     def __init__(self, name):
         super().__init__(StringCol.type, name, StringCol.default)
 
-    def validate(self, value):
+    @staticmethod
+    def validate(value):
         return isinstance(value, str)
 
 
