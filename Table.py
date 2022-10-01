@@ -21,13 +21,15 @@ class Table:
         row = []
         if len(self.columns) == 0:
             raise ValueError('No column in table')
-        if len(values) > len(self.columns):
+        if len(values.keys()) > len(self.columns):
             raise ValueError('Values length is bigger then column length')
-        for index, value in enumerate(values):
-            current_col = self.columns[index]
-            if not current_col.validate(value):
-                raise TypeError(f'This value {value} does not match column type! Column {current_col.name} type is {current_col.type} and entered type is {type(value)}')
-            row.append(value)
+        for index, column in enumerate(self.columns):
+            current_value = values.get(column.name, None)
+            if not current_value:
+                default_value = column.default
+            if current_value and not column.validate(current_value):
+                raise TypeError(f'This value {current_value} does not match column type! Column {column.name} type is {column.type} and entered type is {type(value)}')
+            row.append(current_value or default_value)
         new_row = Row(row)
         self.rows.append(new_row)
 
