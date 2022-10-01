@@ -107,11 +107,14 @@ class EnumCol(Column):
         type_class: Column = EnumCol.COLUMN_TYPE_CLASS[column_type]
 
         for value in available_values:
-            type_class.validate(value)
+            if not type_class.validate(value):
+                raise ValueError(
+                    f"Value '{value}' does not pass validation for '{column_type}' type"
+                )
 
-        super().__init__(column_type, name, default)
         self.available_values = available_values
         self.type_class = type_class
+        super().__init__(column_type, name, default)
 
     def validate(self, value) -> bool:
         return value in self.available_values and self.type_class.validate(value)
