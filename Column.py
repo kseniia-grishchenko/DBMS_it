@@ -68,17 +68,6 @@ class StringCol(Column):
         return isinstance(value, str)
 
 
-class EnumCol(Column):
-    type = 'enum'
-
-    def __init__(self, name, values):
-        super().__init__(EnumCol.type, name, values[0])
-        self.availableValues = values
-
-    def validate(self, value):
-        return value in self.availableValues
-
-
 class EmailCol(Column):
     TYPE = "email"
     DEFAULT = "default@default.com"
@@ -109,10 +98,20 @@ class EnumCol(Column):
         if len(available_values) == 0:
             raise ValueError("Available values cannot be empty!")
 
-    def __init__(self, name):
-        super().__init__(EmailCol.type, name, EmailCol.default)
+        if default is None:
+            default = available_values[0]
+
+        if column_type not in EnumCol.COLUMN_TYPE_CLASS.keys():
+            raise TypeError("This type is not supported!")
+
+        type_class: Column = EnumCol.COLUMN_TYPE_CLASS[column_type]
+
+        for value in available_values:
+            type_class.validate(value)
+
+        super().__init__(column_type, name, default)
+        self.available_values = available_values
+        self.type_class = type_class
 
     def validate(self, value):
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        return bool(re.fullmatch(regex, value))
-
+        return value in self.available_values and self.type_class.validate(value)
