@@ -14,10 +14,11 @@ class Table:
         self.name = name
 
     def __str__(self):
-        str_columns = " ".join(map(str, self.columns))
-        str_rows = "\n".join(map(str, self.rows))
-
-        return f'[{str_columns}]\n{str_rows}'
+        return tabulate(
+            [row.values for row in self.rows],
+            [column.name for column in self.columns],
+            tablefmt="orgtbl",
+        )
 
     def add_row(self, values):
         row = []
