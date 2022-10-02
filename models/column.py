@@ -103,15 +103,15 @@ class EnumCol(Column):
         self, name: str, column_type: str, available_values: tuple, default: Any = None
     ) -> None:
         if len(available_values) == 0:
-            raise ValueError("Available values cannot be empty!")
+            raise ValueError("Available values for enum cannot be empty!")
 
         if default is None:
             default = available_values[0]
 
         if column_type not in EnumCol.COLUMN_TYPE_CLASS.keys():
             raise TypeError(
-                "This type is not supported!"
-            )  # TODO: make all errors more readable: This type -> which type exactly?
+                f"Type '{column_type}' is not supported for enum! Please use one of {tuple(EnumCol.COLUMN_TYPE_CLASS)}"
+            )
 
         type_class: Column = EnumCol.COLUMN_TYPE_CLASS[column_type]
 

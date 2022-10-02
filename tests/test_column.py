@@ -60,12 +60,12 @@ def test_email_col_validation():
         (
             ("test", "error_type", (1, 2, 3)),
             TypeError,
-            "This type is not supported!"
+            "Type 'error_type' is not supported for enum! Please use one of ('int', 'real', 'char', 'string', 'email')"
         ),
         (
             ("test", "int", tuple()),
             ValueError,
-            "Available values cannot be empty!"
+            "Available values for enum cannot be empty!"
         ),
         (
             ("test", "int", (1, "asdf", 3)),

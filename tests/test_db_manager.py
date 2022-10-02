@@ -75,6 +75,18 @@ def test_corresponding_column_method_was_called(db_manager_method: str, args: tu
             mock.assert_called_once()
 
 
+def test_access_db_without_creating_or_opening():
+    db_manager = DBManager()
+
+    with pytest.raises(ValueError) as exception_info:
+        db_manager.add_table("test_table")
+
+    assert (
+        exception_info.value.args[0]
+        == "You should open or create DB before accessing it!"
+    )
+
+
 def test_save_database_file_creating():
     file_name = "test_db.pickle"
     try:
