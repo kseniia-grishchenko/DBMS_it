@@ -113,7 +113,7 @@ def test_change_row():
     with pytest.raises(ValueError):
         table.change_row(0, {})
 
-    with pytest.raises(ValueError) as exception_info:
+    with pytest.raises(IndexError) as exception_info:
         table.change_row(10, {"amount": 10})
 
     assert exception_info.value.args[0] == "Row with index '10' does not exist!"

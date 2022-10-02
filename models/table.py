@@ -86,7 +86,7 @@ class Table:
 
     def get_row(self, index: int) -> Row:
         if not (0 <= index < len(self._rows)):
-            raise ValueError(f"Row with index '{index}' does not exist!")
+            raise IndexError(f"Row with index '{index}' does not exist!")
 
         return self._rows[index]
 
