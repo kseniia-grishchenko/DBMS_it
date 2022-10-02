@@ -8,25 +8,37 @@ from .row import Row
 
 class Table:
     def __init__(self, name: str) -> None:
-        self.name = name
-        self.columns: list[Column] = []
-        self.rows: list[Row] = []
+        self._name = name
+        self._columns: list[Column] = []
+        self._rows: list[Row] = []
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def rows_count(self):
+        return len(self._rows)
+
+    @property
+    def columns_count(self):
+        return len(self._columns)
 
     def __str__(self):
         return f"Table: {self.name}\n" + self._str_columns_and_rows()
 
     def _str_columns_and_rows(self) -> str:
-        if len(self.columns) == 0:
+        if len(self._columns) == 0:
             return ""
 
         return tabulate(
-            [[index] + row.values for index, row in enumerate(self.rows)],
+            [[index] + row.values for index, row in enumerate(self._rows)],
             ("index",) + self._get_column_names(),
             tablefmt="orgtbl",
         )
 
     def _get_column_names(self) -> tuple[str]:
-        return tuple(column.name for column in self.columns)
+        return tuple(column.name for column in self._columns)
 
     def _check_column_name_already_exists(self, new_column_name: str) -> bool:
         return new_column_name in self._get_column_names()
@@ -37,11 +49,11 @@ class Table:
                 f"Column with name '{column.name}' already exists in the table!"
             )
 
-        self.columns.append(column)
+        self._columns.append(column)
         self._add_default_values_to_all_existing_rows(column)
 
     def _add_default_values_to_all_existing_rows(self, column: Column) -> None:
-        for row in self.rows:
+        for row in self._rows:
             row.values.append(column.default)
 
     def _validate_row_data(self, data: dict[str, Any]) -> None:
@@ -59,7 +71,7 @@ class Table:
 
         row = []
 
-        for column in self.columns:
+        for column in self._columns:
             value_to_add = data.get(column.name, None)
 
             if not value_to_add:  # handle default case

@@ -7,13 +7,13 @@ from models.table import Table
 def test_add_column():
     table = Table("test")
 
-    assert len(table.columns) == 0
+    assert table.columns_count == 0
 
     test_col = IntCol("amount")
 
     table.add_column(test_col)
 
-    assert len(table.columns) == 1
+    assert table.columns_count == 1
 
     with pytest.raises(ValueError) as exception_info:
         table.add_column(test_col)
@@ -27,7 +27,7 @@ def test_add_column():
 def test_add_row():
     table = Table("test")
 
-    assert len(table.rows) == 0
+    assert table.rows_count == 0
 
     with pytest.raises(ValueError) as exception_info:
         table.add_row({})
@@ -44,7 +44,7 @@ def test_add_row():
 
     table.add_column(IntCol("amount"))
     table.add_row({"amount": 10})
-    assert table.rows[0].values == [10]
+    assert table.get_row(0).values == [10]
 
     with pytest.raises(TypeError):
         table.add_row({"amount": "hello"})
@@ -55,15 +55,15 @@ def test_add_column_after_add_row():
     table.add_column(IntCol("amount"))
     table.add_row({"amount": 1})
 
-    assert len(table.rows) == 1
-    assert table.rows[0].values == [1]
+    assert table.rows_count == 1
+    assert table.get_row(0).values == [1]
 
     table.add_column(EmailCol("user_email"))
     table.add_row({"amount": 2, "user_email": "test@test.com"})
 
-    assert len(table.rows) == 2
-    assert table.rows[0].values == [1, "default@default.com"]
-    assert table.rows[1].values == [2, "test@test.com"]
+    assert table.rows_count == 2
+    assert table.get_row(0).values == [1, "default@default.com"]
+    assert table.get_row(1).values == [2, "test@test.com"]
 
 
 def test_table_str():
