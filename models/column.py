@@ -10,21 +10,28 @@ class Column(ABC):
     name: str
     default: Any
 
-    def __post_init__(self):
-        if not self.validate(self.default):
-            raise TypeError("Default value does not pass validation")
+    def __post_init__(self) -> None:
+        self.validate_or_error(self.default)
 
     @staticmethod
     @abstractmethod
     def validate(value) -> bool:
         pass
 
+    def validate_or_error(self, value: Any) -> None:
+        if not self.validate(value):
+            raise TypeError(
+                f"This value '{value}' does not pass column validation! "
+                f"Column '{self.name}' has type '{self.type}' and entered type is "
+                f"'{type(value).__name__}'"
+            )
+
 
 class IntCol(Column):
     TYPE = "int"
     DEFAULT = 0
 
-    def __init__(self, name: str, default: int = DEFAULT):
+    def __init__(self, name: str, default: int = DEFAULT) -> None:
         super().__init__(IntCol.TYPE, name, default)
 
     @staticmethod
@@ -36,7 +43,7 @@ class RealCol(Column):
     TYPE = "real"
     DEFAULT = 0.0
 
-    def __init__(self, name: str, default: float = DEFAULT):
+    def __init__(self, name: str, default: float = DEFAULT) -> None:
         super().__init__(RealCol.TYPE, name, default)
 
     @staticmethod
@@ -48,7 +55,7 @@ class CharCol(Column):
     TYPE = "char"
     DEFAULT = "_"
 
-    def __init__(self, name: str, default: str = DEFAULT):
+    def __init__(self, name: str, default: str = DEFAULT) -> None:
         super().__init__(CharCol.TYPE, name, default)
 
     @staticmethod
@@ -60,7 +67,7 @@ class StringCol(Column):
     TYPE = "string"
     DEFAULT = ""
 
-    def __init__(self, name: str, default: str = DEFAULT):
+    def __init__(self, name: str, default: str = DEFAULT) -> None:
         super().__init__(StringCol.TYPE, name, default)
 
     @staticmethod
@@ -72,7 +79,7 @@ class EmailCol(Column):
     TYPE = "email"
     DEFAULT = "default@default.com"
 
-    def __init__(self, name: str, default: str = DEFAULT):
+    def __init__(self, name: str, default: str = DEFAULT) -> None:
         super().__init__(EmailCol.TYPE, name, default)
 
     @staticmethod
@@ -94,7 +101,7 @@ class EnumCol(Column):
 
     def __init__(
         self, name: str, column_type: str, available_values: tuple, default: Any = None
-    ):
+    ) -> None:
         if len(available_values) == 0:
             raise ValueError("Available values cannot be empty!")
 
@@ -102,7 +109,9 @@ class EnumCol(Column):
             default = available_values[0]
 
         if column_type not in EnumCol.COLUMN_TYPE_CLASS.keys():
-            raise TypeError("This type is not supported!")
+            raise TypeError(
+                "This type is not supported!"
+            )  # TODO: make all errors more readable: This type -> which type exactly?
 
         type_class: Column = EnumCol.COLUMN_TYPE_CLASS[column_type]
 
