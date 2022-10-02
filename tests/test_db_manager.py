@@ -6,12 +6,10 @@ import pytest
 from models.column import IntCol
 from models.database import Database
 from models.db_manager import DBManager
-
-
-# fmt: off
 from models.table import Table
 
 
+# fmt: off
 @pytest.mark.parametrize(
     "db_manager_method, args",
     [
