@@ -17,7 +17,10 @@ def test_column_default_validation():
     with pytest.raises(TypeError) as exception_info:
         TestColumn("test_type", "test_name", "incorrect")
 
-    assert exception_info.value.args[0] == "Default value does not pass validation"
+    assert exception_info.value.args[0] == (
+        "This value 'incorrect' does not pass column validation! Column 'test_name' has "
+        "type 'test_type' and entered type is 'str'"
+    )
 
 
 def test_int_col_validation():
@@ -72,7 +75,8 @@ def test_email_col_validation():
         (
             ("test", "int", (1, 3, 5), 7),
             TypeError,  # here not sure, maybe also ValueError btw
-            "Default value does not pass validation"
+            "This value '7' does not pass column validation! "
+            "Column 'test' has type 'int' and entered type is 'int'"
         )
     ],
 )
