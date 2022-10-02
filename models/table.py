@@ -70,19 +70,26 @@ class Table:
 
             row.append(value_to_add)
 
-        self.rows.append(Row(row))
+        self._rows.append(Row(row))
 
     def get_row(self, index: int) -> Row:
-        if not (0 <= index < len(self.rows)):
-            raise ValueError("Row with such index does not exist!")
+        if not (0 <= index < len(self._rows)):
+            raise ValueError(f"Row with index '{index}' does not exist!")
 
-        return self.rows[index]
+        return self._rows[index]
 
-    def change_row(self, index: int, changed_part: dict) -> None:
-        # row exist
-        # changed_part len is not 0
-        # all keys of changed part is subset of existing columns
-        # check all types match
-        print(index, changed_part)
-        existing_row = self.get_row(index)
-        print("Row exists", existing_row)
+    def _get_column_by_name(self, name: str) -> Column:
+        return next(column for column in self._columns if column.name == name)
+
+    def change_row(self, index: int, data: dict) -> None:
+        row = self.get_row(index)
+        self._validate_row_data(data)
+
+        # validate all values pass validation
+        for column_name, new_column_value in data.items():
+            column = self._get_column_by_name(column_name)
+            column.validate_or_error(new_column_value)
+
+        for column_name, new_column_value in data.items():
+            column_index = self._get_column_names().index(column_name)
+            row[column_index] = new_column_value

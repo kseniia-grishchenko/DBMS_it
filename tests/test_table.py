@@ -1,6 +1,6 @@
 import pytest
 
-from models.column import IntCol, EmailCol
+from models.column import IntCol, EmailCol, EnumCol
 from models.table import Table
 
 
@@ -96,3 +96,36 @@ def test_table_str():
 |       0 |       10 | admin@admin.com |
 |       1 |       15 | user@user.com   |"""
     )
+
+
+def test_change_row():
+    table = Table("test")
+    table.add_column(IntCol("amount"))
+    table.add_column(
+        EnumCol("user_type", "string", ("admin", "user", "moderator"), "user")
+    )
+
+    table.add_row({"amount": 10, "user_type": "admin"})
+    table.add_row({"amount": 20})
+
+    assert table.get_row(1).values == [20, "user"]
+
+    with pytest.raises(ValueError):
+        table.change_row(0, {})
+
+    with pytest.raises(ValueError) as exception_info:
+        table.change_row(10, {"amount": 10})
+
+    assert exception_info.value.args[0] == "Row with index '10' does not exist!"
+
+    with pytest.raises(ValueError):
+        table.change_row(1, {"non_existing_column": "data"})
+
+    with pytest.raises(TypeError):
+        table.change_row(1, {"amount": "incorrect_type_value"})
+
+    with pytest.raises(TypeError):
+        table.change_row(1, {"user_type": "non_existing_user_type"})
+
+    table.change_row(1, {"amount": 30, "user_type": "moderator"})
+    assert table.get_row(1).values == [30, "moderator"]
