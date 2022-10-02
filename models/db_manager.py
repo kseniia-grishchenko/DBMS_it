@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pickle
 from typing import Any
 
 from models.column import Column
@@ -9,12 +10,22 @@ from models.table import Table
 
 
 class DBManager:
-    def __init__(self, db: Database) -> None:
+    def __init__(self, db: Database = None) -> None:
         self.db = db
 
-    @staticmethod
-    def create_database(name: str) -> DBManager:
-        return DBManager(Database(name))
+    @property
+    def db(self) -> Database:
+        if self._db is None:
+            raise ValueError("You should open or create DB before accessing it!")
+
+        return self._db
+
+    @db.setter
+    def db(self, value: Database) -> None:
+        self._db = value
+
+    def create_database(self, name: str) -> None:
+        self.db = Database(name)
 
     def add_table(self, name: str) -> None:
         return self.db.add_table(name)
@@ -44,3 +55,18 @@ class DBManager:
     def delete_row(self, table_name: str, index: int) -> Row:
         table = self.get_table(table_name)
         return table.delete_row(index)
+
+    def save_database(self, path_to_save: str = None) -> str:
+        if path_to_save is None:
+            path_to_save = f"{self.db.name}.pickle"
+
+        with open(path_to_save, "wb") as file:
+            pickle.dump(self.db, file)
+
+        return path_to_save
+
+    def open_database(self, path_to_load: str = None) -> None:
+        with open(path_to_load, "rb") as file:
+            db = pickle.load(file)
+
+        self.db = db
