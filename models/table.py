@@ -122,3 +122,9 @@ class Table:
         ]
 
         return view
+
+    def delete_row(self, index: int) -> Row:
+        """Delete row by index, and return it"""
+        row = self.get_row(index)
+        del self._rows[index]
+        return row

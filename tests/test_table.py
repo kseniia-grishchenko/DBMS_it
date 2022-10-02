@@ -153,3 +153,23 @@ def test_find_rows():
     view = table.find_rows("5")
     assert view.columns_count == 3
     assert view.rows_count == 0
+
+
+def test_delete_row():
+    table = Table("test")
+    table.add_column(IntCol("amount"))
+
+    table.add_row({"amount": 10})
+    table.add_row({"amount": 20})
+    table.add_row({"amount": 30})
+
+    assert table.rows_count == 3
+
+    table.delete_row(1)
+
+    assert table.rows_count == 2
+    assert table.get_row(0).values[0] == 10
+    assert table.get_row(1).values[0] == 30
+
+    with pytest.raises(IndexError):
+        table.delete_row(10)
