@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from tabulate import tabulate
@@ -105,3 +107,18 @@ class Table:
         for column_name, new_column_value in data.items():
             column_index = self._get_column_names().index(column_name)
             row[column_index] = new_column_value
+
+    def find_rows(self, search_string: str) -> Table:
+        """Find rows (and create a temp Table) using search_string - case sensitive contains check for string columns"""
+        view = Table("view")
+        view._columns = self._columns
+
+        view._rows = [
+            row
+            for row in self._rows
+            if any(
+                search_string in value for value in row.values if isinstance(value, str)
+            )
+        ]
+
+        return view

@@ -1,6 +1,6 @@
 import pytest
 
-from models.column import IntCol, EmailCol, EnumCol
+from models.column import IntCol, EmailCol, EnumCol, StringCol, CharCol
 from models.table import Table
 
 
@@ -129,3 +129,27 @@ def test_change_row():
 
     table.change_row(1, {"amount": 30, "user_type": "moderator"})
     assert table.get_row(1).values == [30, "moderator"]
+
+
+def test_find_rows():
+    table = Table("test")
+    table.add_column(IntCol("amount"))
+    table.add_column(StringCol("username"))
+    table.add_column(CharCol("class"))
+
+    table.add_row({"amount": 10, "username": "user1", "class": "A"})
+    table.add_row({"amount": 20, "username": "user2", "class": "B"})
+    table.add_row({"amount": 15, "username": "user3", "class": "A"})
+    table.add_row({"amount": 25, "username": "admin", "class": "D"})
+
+    view = table.find_rows("user")
+    assert view.columns_count == 3
+    assert view.rows_count == 3
+
+    view = table.find_rows("A")
+    assert view.columns_count == 3
+    assert view.rows_count == 2
+
+    view = table.find_rows("5")
+    assert view.columns_count == 3
+    assert view.rows_count == 0
