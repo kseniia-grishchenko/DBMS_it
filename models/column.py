@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import Any
 
 
+COLUMN_TYPE_CHOICES = ["int", "real", "char", "string", "email", "enum"]
+
+
 @dataclass
 class Column(ABC):
     type: str
