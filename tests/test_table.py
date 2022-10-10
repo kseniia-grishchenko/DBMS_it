@@ -74,16 +74,16 @@ def test_table_str():
     assert (
         str(table)
         == """Table: test
-| index   | amount   |
-|---------+----------|"""
+| index: int   | amount: int   |
+|--------------+---------------|"""
     )
 
     table.add_column(EmailCol("email"))
     assert (
         str(table)
         == """Table: test
-| index   | amount   | email   |
-|---------+----------+---------|"""
+| index: int   | amount: int   | email: email   |
+|--------------+---------------+----------------|"""
     )
 
     table.add_row({"amount": 10, "email": "admin@admin.com"})
@@ -91,10 +91,10 @@ def test_table_str():
     assert (
         str(table)
         == """Table: test
-|   index |   amount | email           |
-|---------+----------+-----------------|
-|       0 |       10 | admin@admin.com |
-|       1 |       15 | user@user.com   |"""
+|   index: int |   amount: int | email: email    |
+|--------------+---------------+-----------------|
+|            0 |            10 | admin@admin.com |
+|            1 |            15 | user@user.com   |"""
     )
 
 
