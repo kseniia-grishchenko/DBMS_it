@@ -11,6 +11,10 @@ class Database:
         return self._name
 
     @property
+    def tables(self):
+        return self._tables
+
+    @property
     def tables_count(self):
         return len(self._tables)
 
