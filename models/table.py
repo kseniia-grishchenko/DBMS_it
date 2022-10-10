@@ -19,6 +19,16 @@ class Table:
         return self._name
 
     @property
+    def rows(self):
+        return [[index] + row.values for index, row in enumerate(self._rows)]
+
+    @property
+    def columns(self):
+        return ("index: int",) + tuple(
+            f"{column.name}: {column.type}" for column in self._columns
+        )
+
+    @property
     def rows_count(self):
         return len(self._rows)
 
@@ -34,8 +44,8 @@ class Table:
             return ""
 
         return tabulate(
-            [[index] + row.values for index, row in enumerate(self._rows)],
-            ("index",) + self._get_column_names(),
+            self.rows,
+            self.columns,
             tablefmt="orgtbl",
         )
 
@@ -92,7 +102,7 @@ class Table:
 
         return self._rows[index]
 
-    def _get_column_by_name(self, name: str) -> Column:
+    def get_column_by_name(self, name: str) -> Column:
         return next(column for column in self._columns if column.name == name)
 
     def change_row(self, index: int, data: dict) -> None:
@@ -101,7 +111,7 @@ class Table:
 
         # validate all values pass validation
         for column_name, new_column_value in data.items():
-            column = self._get_column_by_name(column_name)
+            column = self.get_column_by_name(column_name)
             column.validate_or_error(new_column_value)
 
         for column_name, new_column_value in data.items():
