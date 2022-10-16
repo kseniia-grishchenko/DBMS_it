@@ -213,7 +213,7 @@ while True:
                 window["-TABLE-DATA-"].update("")
             window["-ERRORS-"].update("")
 
-    except (TypeError, KeyError, ValueError, IndexError) as e:
+    except Exception as e:
         window["-ERRORS-"].update(f"Errors: {e}")
 
 
