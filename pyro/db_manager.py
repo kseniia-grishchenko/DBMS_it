@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 
 import pickle
 from Pyro5.api import expose, Daemon
@@ -12,6 +13,8 @@ from models.table import Table
 
 from models.db_manager import DBManager
 
+os.environ["PYRO_SERIALIZER"] = "pickle"
+
 
 @expose
 class RemoteDBManager(DBManager):
@@ -24,33 +27,46 @@ class RemoteDBManager(DBManager):
         return daemon.register(self.db)
 
     def add_table(self, name: str) -> None:
-        return self.db.add_table(name)
+        self.db.add_table(name)
+        print(f"Table added: {name}")
 
     def get_table(self, name: str) -> Table:
-        return self.db.get_table(name)
+        table = self.db.get_table(name)
+        print(f"Get table: {name}", table)
+        return daemon.register(table)
 
     def delete_table(self, name: str) -> Table:
-        return self.db.delete_table(name)
+        table = self.db.delete_table(name)
+        print(f"Delete table: {name}")
+        return table
 
     def add_column(self, table_name: str, column: Column) -> None:
         table = self.get_table(table_name)
-        return table.add_column(column)
+        table.add_column(column)
+        print(f"Add column: {column.name} to table: {table_name}")
 
     def add_row(self, table_name: str, data: dict[str, Any]) -> None:
         table = self.get_table(table_name)
-        return table.add_row(data)
+        table.add_row(data)
+        print(f"Add row: {data} to table: {table_name}")
 
     def change_row(self, table_name: str, index: int, data: dict[str, Any]) -> None:
         table = self.get_table(table_name)
-        return table.change_row(index, data)
+        table.change_row(index, data)
+        print(f"Change row: {index} of table: {table_name}")
 
     def find_rows(self, table_name: str, search_string: str) -> Table:
         table = self.get_table(table_name)
-        return table.find_rows(search_string)
+        print(f"Find rows of table: {table_name }by substring: {search_string} ")
+        rows = table.find_rows(search_string)
+        print(f"Found rows: {rows}")
+        return rows
 
     def delete_row(self, table_name: str, index: int) -> Row:
         table = self.get_table(table_name)
-        return table.delete_row(index)
+        row = table.delete_row(index)
+        print(f"Delete row: {index} from table: {table_name}")
+        return row
 
     def save_database(self, path_to_save: str = None) -> str:
         if path_to_save is None:
@@ -58,6 +74,8 @@ class RemoteDBManager(DBManager):
 
         with open(path_to_save, "wb") as file:
             pickle.dump(self.db, file)
+
+        print(f"Save DB to: {path_to_save}")
 
         return path_to_save
 
@@ -67,9 +85,11 @@ class RemoteDBManager(DBManager):
 
         self.db = db
 
+        print(f"Open DB from: {path_to_load}")
 
-daemon = Daemon()  # make a Pyro daemon
-uri = daemon.register(RemoteDBManager)  # register the greeting maker as a Pyro object
 
-print("Ready. Object uri =", uri)  # print the uri so we can use it in the client later
+daemon = Daemon()
+uri = daemon.register(RemoteDBManager)
+
+print("Ready. Object uri =", uri)
 daemon.requestLoop()
