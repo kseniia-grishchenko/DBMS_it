@@ -1,8 +1,14 @@
 import Pyro5.api
 
 
-uri = "PYRO:obj_ae7b5371248d4520b43df4ece71030af@localhost:49849"
+uri = input("Pyro uri of Db Manager: ").strip()
 
-name = input("Enter db name:\n").strip()
 db_manager = Pyro5.api.Proxy(uri)
-Pyro5.api.Proxy(db_manager.create_database("test_2"))
+# db_manager.create_database("test_pyro")
+db_manager.open_database("test_pyro")
+
+db_manager.add_table("pyro")
+
+Pyro5.api.Proxy(db_manager.get_table("pyro"))
+
+db_manager.save_database("test_pyro")
