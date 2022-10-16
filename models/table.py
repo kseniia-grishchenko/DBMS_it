@@ -1,4 +1,5 @@
 from __future__ import annotations
+from Pyro5.api import expose
 
 from typing import Any
 
@@ -8,6 +9,7 @@ from .column import Column
 from .row import Row
 
 
+@expose
 class Table:
     def __init__(self, name: str) -> None:
         self._name = name
