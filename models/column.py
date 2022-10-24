@@ -1,3 +1,4 @@
+from Pyro5.api import expose
 from abc import ABC, abstractmethod
 import re
 from dataclasses import dataclass
@@ -7,14 +8,23 @@ from typing import Any
 COLUMN_TYPE_CHOICES = ["int", "real", "char", "string", "email", "enum"]
 
 
+@expose
 @dataclass
 class Column(ABC):
-    type: str
-    name: str
+    _type: str
+    _name: str
     default: Any
 
     def __post_init__(self) -> None:
         self.validate_or_error(self.default)
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def type(self):
+        return self._type
 
     @staticmethod
     @abstractmethod
@@ -30,6 +40,7 @@ class Column(ABC):
             )
 
 
+@expose
 class IntCol(Column):
     TYPE = "int"
     DEFAULT = 0
@@ -42,6 +53,7 @@ class IntCol(Column):
         return isinstance(value, int)
 
 
+@expose
 class RealCol(Column):
     TYPE = "real"
     DEFAULT = 0.0
@@ -54,6 +66,7 @@ class RealCol(Column):
         return isinstance(value, float)
 
 
+@expose
 class CharCol(Column):
     TYPE = "char"
     DEFAULT = "_"
@@ -66,6 +79,7 @@ class CharCol(Column):
         return isinstance(value, str) and len(value) == 1
 
 
+@expose
 class StringCol(Column):
     TYPE = "string"
     DEFAULT = ""
@@ -78,6 +92,7 @@ class StringCol(Column):
         return isinstance(value, str)
 
 
+@expose
 class EmailCol(Column):
     TYPE = "email"
     DEFAULT = "default@default.com"
@@ -91,6 +106,7 @@ class EmailCol(Column):
         return bool(re.fullmatch(email_regex, value))
 
 
+@expose
 class EnumCol(Column):
     TYPE = "enum"
 

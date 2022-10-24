@@ -41,6 +41,9 @@ class Table:
     def __str__(self):
         return f"Table: {self.name}\n" + self._str_columns_and_rows()
 
+    def to_str(self):
+        return str(self)
+
     def _str_columns_and_rows(self) -> str:
         if len(self._columns) == 0:
             return ""
@@ -57,7 +60,7 @@ class Table:
     def _check_column_name_already_exists(self, new_column_name: str) -> bool:
         return new_column_name in self._get_column_names()
 
-    def add_column(self, column: Column) -> None:
+    def add_column(self, column: Column) -> Column:
         if self._check_column_name_already_exists(column.name):
             raise ValueError(
                 f"Column with name '{column.name}' already exists in the table!"
@@ -65,6 +68,7 @@ class Table:
 
         self._columns.append(column)
         self._add_default_values_to_all_existing_rows(column)
+        return column
 
     def _add_default_values_to_all_existing_rows(self, column: Column) -> None:
         for row in self._rows:
@@ -80,7 +84,7 @@ class Table:
                 f"Invalid column names: {tuple(data.keys())} is not subset of {columns_names}!"
             )
 
-    def add_row(self, data: dict[str, Any]) -> None:
+    def add_row(self, data: dict[str, Any]) -> Row:
         self._validate_row_data(data)
 
         row = []
@@ -96,7 +100,9 @@ class Table:
 
             row.append(value_to_add)
 
-        self._rows.append(Row(row))
+        created_row = Row(row)
+        self._rows.append(created_row)
+        return created_row
 
     def get_row(self, index: int) -> Row:
         if not (0 <= index < len(self._rows)):

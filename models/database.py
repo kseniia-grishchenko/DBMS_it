@@ -1,6 +1,8 @@
+from Pyro5.api import expose
 from models.table import Table
 
 
+@expose
 class Database:
     def __init__(self, name: str):
         self._name = name
@@ -18,12 +20,13 @@ class Database:
     def tables_count(self):
         return len(self._tables)
 
-    def add_table(self, name: str) -> None:
+    def add_table(self, name: str) -> Table:
         table = Table(name)
         if table.name in self._tables:
             raise ValueError(f"Table with name '{table.name}' already exists in DB!")
 
         self._tables[table.name] = table
+        return table
 
     def _validate_table_existence(self, name: str) -> None:
         if name not in self._tables:
